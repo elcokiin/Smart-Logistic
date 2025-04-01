@@ -4,7 +4,6 @@ import Login from './components/auth/Login'
 import Register from './components/auth/Register'
 import Admin from './components/dashboard/Admin'
 import { AuthProvider } from './context/AuthContext'
-import { Routes, Route } from 'react-router-dom'
 
 import Home from './pages/Home'
 import VirtualStore from './pages/VirtualStore';
