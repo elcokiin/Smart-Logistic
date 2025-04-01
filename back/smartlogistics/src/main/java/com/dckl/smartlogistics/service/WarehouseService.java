@@ -36,14 +36,11 @@ public class WarehouseService {
     }
     
     public Warehouse createWarehouse(Warehouse warehouseData) {
-        // Usar el prototipo como base
         Warehouse newWarehouse = prototypeWarehouse.clone();
-        
-        // Actualizar con los datos específicos
+  
         newWarehouse.setName(warehouseData.getName());
         newWarehouse.setLocation(warehouseData.getLocation());
         
-        // Sobrescribir valores predeterminados si se proporcionan
         if (warehouseData.getCapacity() > 0) {
             newWarehouse.setCapacity(warehouseData.getCapacity());
         }

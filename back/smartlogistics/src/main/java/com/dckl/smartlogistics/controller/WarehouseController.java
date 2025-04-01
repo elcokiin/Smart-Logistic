@@ -63,6 +63,7 @@ public class WarehouseController {
             @RequestBody Map<String, String> request) {
         
         String newLocation = request.get("newLocation");
+
         if (newLocation == null || newLocation.trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
