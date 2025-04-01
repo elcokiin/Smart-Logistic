@@ -35,7 +35,17 @@ public class WarehouseController {
     }
     
     @PostMapping
-    public ResponseEntity<Warehouse> createWarehouse(@RequestBody Warehouse warehouse) {
+    public ResponseEntity<?> createWarehouse(@RequestBody Warehouse warehouse) {
+        boolean isValidLocation = warehouseService.isLocationValid(
+                warehouse.getLatitudeWarehouse(),
+                warehouse.getLenghtWarehouse(),
+                300 // Distancia máxima en metros
+        );
+
+        if (!isValidLocation) {
+            return ResponseEntity.badRequest().body("La distancia a otros almacenes debe ser mayor a 300 metros.");
+        }
+
         Warehouse createdWarehouse = warehouseService.createWarehouse(warehouse);
         return new ResponseEntity<>(createdWarehouse, HttpStatus.CREATED);
     }
@@ -56,24 +66,15 @@ public class WarehouseController {
         }
         return ResponseEntity.notFound().build();
     }
-    
-    @PostMapping("/{id}/clone")
-    public ResponseEntity<Warehouse> cloneWarehouse(
-            @PathVariable Long id,
-            @RequestBody Map<String, String> request) {
-        
-        String newLocation = request.get("newLocation");
-        if (newLocation == null || newLocation.trim().isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        
-        return warehouseService.cloneWarehouseWithNewLocation(id, newLocation)
-                .map(warehouse -> new ResponseEntity<>(warehouse, HttpStatus.CREATED))
-                .orElse(ResponseEntity.notFound().build());
-    }
 
     @GetMapping("/hello")
     public ResponseEntity<String> sayHello() {
         return ResponseEntity.ok("Hola Mundo");
+    }
+
+    @GetMapping("/users-warehouses")
+    public ResponseEntity<Map<String, List<Warehouse>>> getUsersWithWarehouses() {
+        Map<String, List<Warehouse>> usersWithWarehouses = warehouseService.getUsersWithWarehouses();
+        return ResponseEntity.ok(usersWithWarehouses);
     }
 }

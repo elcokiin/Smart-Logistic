@@ -1,103 +1,158 @@
 package com.dckl.smartlogistics.model;
 
+import java.sql.Timestamp;
 import java.util.Objects;
 
 public class Warehouse implements Cloneable {
-    
-    private Long id;
-    private String name;
-    private String location;
-    private int capacity;
-    private boolean active;
-    
+
+    private Long idWarehouse;
+    private String nameWarehouse;
+    private String addressWarehouse;
+    private float latitudeWarehouse;
+    private float lenghtWarehouse;
+    private float virtualStorePercentage;
+    private Timestamp dateCreation;
+    private int idSuperAdmin;
+    private int idUserFirebase;
+
     // Constructor por defecto
     public Warehouse() {
     }
-    
+
     // Constructor con parámetros
-    public Warehouse(Long id, String name, String location, int capacity, boolean active) {
-        this.id = id;
-        this.name = name;
-        this.location = location;
-        this.capacity = capacity;
-        this.active = active;
+    public Warehouse(Long idWarehouse, String nameWarehouse, String addressWarehouse, float latitudeWarehouse,
+                     float lenghtWarehouse, float virtualStorePercentage, Timestamp dateCreation, int idSuperAdmin,
+                     int idUserFirebase) {
+        this.idWarehouse = idWarehouse;
+        this.nameWarehouse = nameWarehouse;
+        this.addressWarehouse = addressWarehouse;
+        this.latitudeWarehouse = latitudeWarehouse;
+        this.lenghtWarehouse = lenghtWarehouse;
+        this.virtualStorePercentage = virtualStorePercentage;
+        this.dateCreation = dateCreation;
+        this.idSuperAdmin = idSuperAdmin;
+        this.idUserFirebase = idUserFirebase;
     }
-    
+
     // Getters y Setters
-    public Long getId() {
-        return id;
+    public Long getIdWarehouse() {
+        return idWarehouse;
     }
-    
-    public void setId(Long id) {
-        this.id = id;
+
+    public void setIdWarehouse(Long idWarehouse) {
+        this.idWarehouse = idWarehouse;
     }
-    
-    public String getName() {
-        return name;
+
+    public String getNameWarehouse() {
+        return nameWarehouse;
     }
-    
-    public void setName(String name) {
-        this.name = name;
+
+    public void setNameWarehouse(String nameWarehouse) {
+        this.nameWarehouse = nameWarehouse;
     }
-    
-    public String getLocation() {
-        return location;
+
+    public String getAddressWarehouse() {
+        return addressWarehouse;
     }
-    
-    public void setLocation(String location) {
-        this.location = location;
+
+    public void setAddressWarehouse(String addressWarehouse) {
+        this.addressWarehouse = addressWarehouse;
     }
-    
-    public int getCapacity() {
-        return capacity;
+
+    public float getLatitudeWarehouse() {
+        return latitudeWarehouse;
     }
-    
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
+
+    public void setLatitudeWarehouse(float latitudeWarehouse) {
+        this.latitudeWarehouse = latitudeWarehouse;
     }
-    
-    public boolean isActive() {
-        return active;
+
+    public float getLenghtWarehouse() {
+        return lenghtWarehouse;
     }
-    
-    public void setActive(boolean active) {
-        this.active = active;
+
+    public void setLenghtWarehouse(float lenghtWarehouse) {
+        this.lenghtWarehouse = lenghtWarehouse;
     }
-    
+
+    public float getVirtualStorePercentage() {
+        return virtualStorePercentage;
+    }
+
+    public void setVirtualStorePercentage(float virtualStorePercentage) {
+        this.virtualStorePercentage = virtualStorePercentage;
+    }
+
+    public Timestamp getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(Timestamp dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public int getIdSuperAdmin() {
+        return idSuperAdmin;
+    }
+
+    public void setIdSuperAdmin(int idSuperAdmin) {
+        this.idSuperAdmin = idSuperAdmin;
+    }
+
+    public int getIdUserFirebase() {
+        return idUserFirebase;
+    }
+
+    public void setIdUserFirebase(int idUserFirebase) {
+        this.idUserFirebase = idUserFirebase;
+    }
+
     // Método de clonación (patrón Prototype)
     @Override
     public Warehouse clone() {
         try {
             return (Warehouse) super.clone();
         } catch (CloneNotSupportedException e) {
-            return new Warehouse(this.id, this.name, this.location, this.capacity, this.active);
+            return new Warehouse(this.idWarehouse, this.nameWarehouse, this.addressWarehouse, this.latitudeWarehouse,
+                    this.lenghtWarehouse, this.virtualStorePercentage, this.dateCreation, this.idSuperAdmin,
+                    this.idUserFirebase);
         }
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Warehouse warehouse = (Warehouse) o;
-        return capacity == warehouse.capacity && active == warehouse.active && 
-               Objects.equals(id, warehouse.id) && 
-               Objects.equals(name, warehouse.name) && 
-               Objects.equals(location, warehouse.location);
+        return Float.compare(warehouse.latitudeWarehouse, latitudeWarehouse) == 0 &&
+                Float.compare(warehouse.lenghtWarehouse, lenghtWarehouse) == 0 &&
+                Float.compare(warehouse.virtualStorePercentage, virtualStorePercentage) == 0 &&
+                idSuperAdmin == warehouse.idSuperAdmin &&
+                idUserFirebase == warehouse.idUserFirebase &&
+                Objects.equals(idWarehouse, warehouse.idWarehouse) &&
+                Objects.equals(nameWarehouse, warehouse.nameWarehouse) &&
+                Objects.equals(addressWarehouse, warehouse.addressWarehouse) &&
+                Objects.equals(dateCreation, warehouse.dateCreation);
     }
-    
+
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, location, capacity, active);
+        return Objects.hash(idWarehouse, nameWarehouse, addressWarehouse, latitudeWarehouse, lenghtWarehouse,
+                virtualStorePercentage, dateCreation, idSuperAdmin, idUserFirebase);
     }
-    
+
     @Override
     public String toString() {
         return "Warehouse{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", location='" + location + '\'' +
-                ", capacity=" + capacity +
-                ", active=" + active +
+                "idWarehouse=" + idWarehouse +
+                ", nameWarehouse='" + nameWarehouse + '\'' +
+                ", addressWarehouse='" + addressWarehouse + '\'' +
+                ", latitudeWarehouse=" + latitudeWarehouse +
+                ", lenghtWarehouse=" + lenghtWarehouse +
+                ", virtualStorePercentage=" + virtualStorePercentage +
+                ", dateCreation=" + dateCreation +
+                ", idSuperAdmin=" + idSuperAdmin +
+                ", idUserFirebase=" + idUserFirebase +
                 '}';
     }
 }
