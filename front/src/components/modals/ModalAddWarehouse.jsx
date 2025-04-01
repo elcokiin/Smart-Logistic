@@ -55,21 +55,6 @@ const ModalAddWarehouse = ({ isOpen, onClose, onSubmit }) => {
                         </div>
 
                         <div>
-                            <label htmlFor="creator" className='block text-sm font-medium text-gray-700 mb-1'>
-                                Nombre del creador
-                            </label>
-                            <input
-                                type="text"
-                                id="creator"
-                                name="creator"
-                                value={formData.creator}
-                                onChange={handleChange}
-                                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--primary-yellow)'
-                                required
-                            />
-                        </div>
-
-                        <div>
                             <label htmlFor="location" className='block text-sm font-medium text-gray-700 mb-1'>
                                 Ubicación
                             </label>
