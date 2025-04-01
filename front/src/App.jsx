@@ -17,7 +17,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Navigate to="/login" />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/admin" element={<Admin />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/store" element={<VirtualStore />} />
             {/* Aquí puedes añadir más rutas según las necesites */}
           </Routes>
         </div>

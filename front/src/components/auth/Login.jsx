@@ -17,7 +17,7 @@ function Login() {
       setError('');
       setLoading(true);
       await login(email, password);
-      navigate('/dashboard');
+      navigate('/home');
     } catch (error) {
       setError('Error al iniciar sesión: ' + error.message);
     } finally {
