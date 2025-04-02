@@ -17,9 +17,21 @@ function Login() {
       setError('');
       setLoading(true);
       await login(email, password);
+      
+      // Redirigir según el rol (esto lo manejaremos después con el router)
       navigate('/dashboard');
     } catch (error) {
-      setError('Error al iniciar sesión: ' + error.message);
+      let errorMessage = "Error al iniciar sesión";
+      
+      if (error.code === 'auth/user-not-found') {
+        errorMessage = "Usuario no encontrado";
+      } else if (error.code === 'auth/wrong-password') {
+        errorMessage = "Contraseña incorrecta";
+      } else if (error.code === 'auth/invalid-credential') {
+        errorMessage = "Credenciales inválidas";
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

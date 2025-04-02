@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebase/config';
+import { auth, db } from '../../firebase/config';
+import { doc, setDoc } from 'firebase/firestore';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -9,6 +11,9 @@ const Register = () => {
         password: '',
         confirmPassword: '',
     });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -18,21 +23,41 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            alert('Passwords do not match');
+            setError('Las contraseñas no coinciden');
             return;
         }
 
         try {
+            setLoading(true);
+            setError('');
+            
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 formData.email,
                 formData.password
             );
-            console.log('User created:', userCredential.user);
-            alert('Usuario registrado exitosamente');
+            
+            // Guardar información adicional del usuario en Firestore
+            await setDoc(doc(db, "users", userCredential.user.uid), {
+                name: formData.name,
+                email: formData.email,
+                role: 'user', // Rol por defecto
+                createdAt: new Date()
+            });
+
+            navigate('/login');
         } catch (error) {
-            console.error('Error creating user:', error);
-            alert('Error al registrar el usuario: ' + error.message);
+            let errorMessage = "Error al registrar el usuario";
+            
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage = "El correo ya está registrado";
+            } else if (error.code === 'auth/weak-password') {
+                errorMessage = "La contraseña debe tener al menos 6 caracteres";
+            }
+            
+            setError(errorMessage);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -98,15 +123,21 @@ const Register = () => {
                         </div>
                     </div>
 
+                    {error && <div className="text-red-500 text-sm">{error}</div>}
+
                     <div>
                         <button
                             type="submit"
                             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out"
+                            disabled={loading}
                         >
-                            Registrarse
+                            {loading ? 'Registrando...' : 'Registrarse'}
                         </button>
                     </div>
                 </form>
+                <div className="mt-4 text-center">
+                    <Link to="/login" className="text-indigo-600 hover:text-indigo-500">¿Ya tienes una cuenta? Inicia sesión</Link>
+                </div>
             </div>
         </div>
     );

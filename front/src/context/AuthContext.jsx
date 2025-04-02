@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase/config';
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
-import { getUserRole } from '../services/authService';
+import { auth, db } from '../firebase/config';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const AuthContext = createContext();
 
@@ -16,11 +16,27 @@ export const AuthProvider = ({ children }) => {
     return signInWithEmailAndPassword(auth, email, password);
   }
 
+  async function logout() {
+    return signOut(auth);
+  }
+
+  async function getUserRole(userId) {
+    try {
+      const userDoc = await getDoc(doc(db, "users", userId));
+      if (userDoc.exists()) {
+        return userDoc.data().role;
+      }
+      return 'user'; 
+    } catch (error) {
+      console.error("Error getting user role:", error);
+      return 'user';
+    }
+  }
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       if (user) {
-        // Obtener el rol del usuario cuando inicia sesión
         const role = await getUserRole(user.uid);
         setUserRole(role);
       } else {
@@ -34,9 +50,10 @@ export const AuthProvider = ({ children }) => {
   const value = {
     currentUser,
     userRole,
-    isAdmin: userRole === 'admin',
-    isSuperAdmin: userRole === 'superadmin',
-    login // Exporta la función login para que esté disponible en el contexto
+    login,
+    logout,
+    isAdmin: userRole === 'admin' || userRole === 'superadmin',
+    isSuperAdmin: userRole === 'superadmin'
   };
 
   return (
