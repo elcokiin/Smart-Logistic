@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.17",
-    "front": "file:",
-    "firebase": "^11.6.0",
     "@vis.gl/react-google-maps": "^1.5.2",
+    "firebase": "^11.6.0",
+    "front": "file:",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",

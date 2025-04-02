@@ -25,7 +25,7 @@ public class WarehouseService {
         return warehouseRepository.findAll();
     }
 
-    public Optional<Warehouse> getWarehouseById(Long id) {
+    public Optional<Warehouse> getWarehouseById(Integer id) {
         return warehouseRepository.findById(id);
     }
 
@@ -33,32 +33,32 @@ public class WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
-    public Optional<Warehouse> updateWarehouse(Long id, Warehouse warehouseData) {
-        Optional<Warehouse> existingWarehouseOpt = warehouseRepository.findById(id);
-        if (existingWarehouseOpt.isEmpty()) {
-            return Optional.empty();
-        }
-
-        Warehouse existingWarehouse = existingWarehouseOpt.get();
-        existingWarehouse.setNameWarehouse(warehouseData.getNameWarehouse());
-        existingWarehouse.setAddressWarehouse(warehouseData.getAddressWarehouse());
-        existingWarehouse.setLatitudeWarehouse(warehouseData.getLatitudeWarehouse());
-        existingWarehouse.setLenghtWarehouse(warehouseData.getLenghtWarehouse());
-        existingWarehouse.setVirtualStorePercentage(warehouseData.getVirtualStorePercentage());
-        existingWarehouse.setDateCreation(warehouseData.getDateCreation());
-        existingWarehouse.setIdSuperAdmin(warehouseData.getIdSuperAdmin());
-        existingWarehouse.setIdUserFirebase(warehouseData.getIdUserFirebase());
-
-        return Optional.of(warehouseRepository.save(existingWarehouse));
+    public Optional<Warehouse> updateWarehouse(Integer id, Warehouse warehouse) {
+        return warehouseRepository.findById(id).map(existingWarehouse -> {
+            existingWarehouse.setNameWarehouse(warehouse.getNameWarehouse());
+            existingWarehouse.setLatitudeWarehouse(warehouse.getLatitudeWarehouse());
+            existingWarehouse.setLenghtWarehouse(warehouse.getLenghtWarehouse());
+            existingWarehouse.setVirtualStorePercentage(warehouse.getVirtualStorePercentage());
+            existingWarehouse.setIdSuperAdmin(warehouse.getIdSuperAdmin());
+            existingWarehouse.setIdUserFirebase(warehouse.getIdUserFirebase());
+            return warehouseRepository.save(existingWarehouse);
+        });
     }
 
-    public boolean deleteWarehouse(Long id) {
-        return warehouseRepository.deleteById(id);
+    public boolean deleteWarehouse(Integer id) {
+        if (warehouseRepository.existsById(id)) {
+            warehouseRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
     public boolean isLocationValid(float latitude, float longitude, double maxDistanceMeters) {
         List<Warehouse> warehouses = warehouseRepository.findAll();
         for (Warehouse warehouse : warehouses) {
+            if (warehouse.getLatitudeWarehouse() == 0.0f && warehouse.getLenghtWarehouse() == 0.0f) {
+                continue; // Ignorar almacenes con coordenadas no válidas
+            }
             double distance = calculateDistance(latitude, longitude, warehouse.getLatitudeWarehouse(), warehouse.getLenghtWarehouse());
             if (distance < maxDistanceMeters) {
                 return false;
