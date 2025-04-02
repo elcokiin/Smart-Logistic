@@ -5,7 +5,7 @@ import { useAuth } from "../context/AuthContext";
 
 const Header = ({ children }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { currentUser, logout } = useAuth();
+    const { currentUser, logout, hasRole } = useAuth();
     const navigate = useNavigate();
 
     const handleLogout = async () => {
@@ -27,16 +27,34 @@ const Header = ({ children }) => {
 
                 <div className="flex-1 flex items-center justify-between flex-col gap-4">
                     <ul className="flex space-x-6 justify-center">
-                        <li>
-                            <Link to="/home" className="px-3 py-2 font-medium transition-transform duration-150 ease-out -translate-x-1 -translate-y-1 hover:translate-x-0 hover:translate-y-0 relative group hover:text-gray-700">
-                                Almacenes
-                            </Link>
-                        </li>
-                        <li>
-                            <Link to="/store" className="px-3 py-2 font-medium transition-transform duration-150 ease-out -translate-x-1 -translate-y-1 hover:translate-x-0 hover:translate-y-0 relative group hover:text-gray-700">
-                                Tienda Virtual
-                            </Link>
-                        </li>
+                        {hasRole('superAdmin') && (
+                            <>
+                                <li>
+                                    <Link to="/superAdmin" className="px-3 py-2 font-medium transition-transform duration-150 ease-out -translate-x-1 -translate-y-1 hover:translate-x-0 hover:translate-y-0 relative group hover:text-gray-700">
+                                        Panel
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/warehouse-config" className="px-3 py-2 font-medium transition-transform duration-150 ease-out -translate-x-1 -translate-y-1 hover:translate-x-0 hover:translate-y-0 relative group hover:text-gray-700">
+                                        Configuración de Almacen
+                                    </Link>
+                                </li>
+                            </>
+                        )}
+                        {hasRole('admin') && (
+                            <>
+                                <li>
+                                    <Link to="/home" className="px-3 py-2 font-medium transition-transform duration-150 ease-out -translate-x-1 -translate-y-1 hover:translate-x-0 hover:translate-y-0 relative group hover:text-gray-700">
+                                        Almacenes
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/store" className="px-3 py-2 font-medium transition-transform duration-150 ease-out -translate-x-1 -translate-y-1 hover:translate-x-0 hover:translate-y-0 relative group hover:text-gray-700">
+                                        Tienda Virtual
+                                    </Link>
+                                </li>
+                            </>
+                        )}
                     </ul>
 
                     {children}

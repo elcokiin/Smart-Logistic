@@ -8,19 +8,33 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import Home from './pages/Home'
 import VirtualStore from './pages/VirtualStore';
 import AccessDenied from './pages/AccessDenied';
+import WarehouseConfig from './pages/WarehouseConfig'
+import Loader from './components/Loader'
 
 // Define roles permitidos por ruta
 const ROUTE_ACCESS_MAP = {
   '/home': ['admin'],
   '/store': ['admin'],
-  '/superAdmin': ['superAdmin']
+  '/superAdmin': ['superAdmin'],
+  '/warehouse-config': ['superAdmin'],
 };
 
 // Protected route - redirige a login si no está autenticado o no tiene permiso
 const ProtectedRoute = ({ children, requiredRoles = [] }) => {
   const { currentUser, loading, hasRole } = useAuth();
 
-  if (loading) return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+      }}>
+        <Loader />
+      </div>
+    );
+  }
 
   // Redireccionar si no está autenticado
   if (!currentUser) {
@@ -41,7 +55,18 @@ const ProtectedRoute = ({ children, requiredRoles = [] }) => {
 const PublicRoute = ({ children }) => {
   const { currentUser, loading, hasRole } = useAuth();
 
-  if (loading) return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+      }}>
+        <Loader />
+      </div>
+    );
+  }
 
   // Si está autenticado, redirigir a la primera página a la que tenga acceso
   if (currentUser) {
@@ -99,6 +124,15 @@ function AppRoutes() {
         element={
           <ProtectedRoute requiredRoles={ROUTE_ACCESS_MAP['/superAdmin']}>
             <SuperAdmin />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/warehouse-config"
+        element={
+          <ProtectedRoute requiredRoles={ROUTE_ACCESS_MAP['/warehouse-config']}>
+            <WarehouseConfig />
           </ProtectedRoute>
         }
       />
