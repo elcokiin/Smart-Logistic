@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext'; // Importamos el hook de autenticación
 
-const ModalAddWarehouse = ({ isOpen, onClose, onSubmit }) => {
+import { createWarehouse } from '../../services/warehouseService';
+
+const ModalAddWarehouse = ({ isOpen, onClose }) => {
+    const { currentUser } = useAuth(); // Obtenemos el usuario actual
     const [formData, setFormData] = useState({
-        name: '',
-        creator: '',
-        location: ''
+        nameWarehouse: '',
+        latitudeWarehouse: '',
+        lenghtWarehouse: '',
     });
 
     const handleChange = (e) => {
@@ -16,10 +20,34 @@ const ModalAddWarehouse = ({ isOpen, onClose, onSubmit }) => {
         }));
     };
 
+    const onSubmit = async (warehouseData) => {
+        try {
+            if (currentUser && currentUser?.uid) {
+                const newWarehouse = {
+                    ...warehouseData,
+                    idUserFirebase: currentUser?.uid,
+                    dateCreation: new Date()
+                }
+
+                await createWarehouse(newWarehouse);
+            }
+        } catch (err) {
+            console.error(err)
+        }
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formData);
-        setFormData({ name: '', creator: '', location: '' });
+
+        // Agregamos el ID y email del usuario actual como creador
+        const warehouseData = {
+            ...formData,
+            userFirebaseId: currentUser?.uid || 'usuario_anónimo',
+            createdAt: new Date().toISOString()
+        };
+
+        onSubmit(warehouseData);
+        setFormData({ nameWarehouse: '', latitudeWarehouse: '', lenghtWarehouse: '' });
     };
 
     if (!isOpen) return null;
@@ -27,11 +55,11 @@ const ModalAddWarehouse = ({ isOpen, onClose, onSubmit }) => {
     return (
         <div className="fixed bg-black/50 top-0 right-0 h-screen w-screen flex flex-col items-center justify-center z-[200]">
             <div className='w-[96%] max-w-[460px] bg-white rounded-lg shadow-lg flex flex-col justify-between'>
-                <header className='w-full flex justify-between items-center p-4 bg-(--primary-yellow) rounded-t-lg'>
-                    <h2 className='text-xl text-(--primary-blue) font-bold'>Agregar Nuevo Almacén</h2>
+                <header className='w-full flex justify-between items-center p-4 bg-primary-yellow rounded-t-lg'>
+                    <h2 className='text-xl text-gray-700 font-bold'>Agregar Nuevo Almacén</h2>
                     <button
                         onClick={onClose}
-                        className='text-(--primary-blue) hover:text-red-600 duration-200 cursor-pointer'
+                        className='text-gray-700 hover:text-red-600 duration-200 cursor-pointer'
                     >
                         <FaTimes size={20} />
                     </button>
@@ -49,31 +77,55 @@ const ModalAddWarehouse = ({ isOpen, onClose, onSubmit }) => {
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--primary-yellow)'
+                                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-yellow'
                                 required
                             />
                         </div>
 
                         <div>
-                            <label htmlFor="location" className='block text-sm font-medium text-gray-700 mb-1'>
-                                Ubicación
+                            <label htmlFor="latitude" className='block text-sm font-medium text-gray-700 mb-1'>
+                                Latitud
                             </label>
                             <input
-                                type="text"
-                                id="location"
-                                name="location"
-                                value={formData.location}
+                                type="number"
+                                step="any"
+                                id="latitude"
+                                name="latitude"
+                                value={formData.latitude}
                                 onChange={handleChange}
-                                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-(--primary-yellow)'
+                                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-yellow'
                                 required
                             />
                         </div>
+
+                        <div>
+                            <label htmlFor="longitude" className='block text-sm font-medium text-gray-700 mb-1'>
+                                Longitud
+                            </label>
+                            <input
+                                type="number"
+                                step="any"
+                                id="longitude"
+                                name="longitude"
+                                value={formData.longitude}
+                                onChange={handleChange}
+                                className='w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-yellow'
+                                required
+                            />
+                        </div>
+
+                        {/* Muestra información del creador (opcional) */}
+                        {currentUser && (
+                            <div className="mt-2 text-sm text-gray-500">
+                                Creando como: {currentUser.email}
+                            </div>
+                        )}
                     </div>
 
                     <div className='mt-6'>
                         <button
                             type="submit"
-                            className='w-full py-2 px-4 cursor-pointer bg-(--primary-yellow) text-(--primary-blue) hover:bg-(second-yellow) border border-(--primary-yellow) duration-200 font-semibold rounded-md  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-(--primary-yellow)'
+                            className='w-full py-2 px-4 cursor-pointer bg-primary-yellow text-gray-700 hover:bg-yellow-400 border border-primary-yellow duration-200 font-semibold rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-yellow'
                         >
                             Agregar Almacén
                         </button>

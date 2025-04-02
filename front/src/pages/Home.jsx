@@ -6,7 +6,10 @@ import TableWarehouse from '../components/TableWarehouse'
 import ModalAddWarehouse from "../components/modals/ModalAddWarehouse";
 import Search from "../components/Search";
 
+import { getWarehouses } from "../services/warehouseService";
+
 import { FaPlus } from "react-icons/fa";
+import { useEffect } from "react";
 
 const warehouses = [
     {
@@ -45,6 +48,13 @@ const warehouses = [
 const Home = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    useEffect(() => {
+        const hola = async () => {
+            console.log(await getWarehouses());
+        }
+
+        hola();
+    }, []);
 
     return (
         <>
