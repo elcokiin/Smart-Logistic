@@ -5,6 +5,7 @@ import com.dckl.smartlogistics.repository.WarehouseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Map;
@@ -30,6 +31,9 @@ public class WarehouseService {
     }
 
     public Warehouse createWarehouse(Warehouse warehouse) {
+        if (warehouse.getDateCreation() == null) {
+            warehouse.setDateCreation(LocalDateTime.now()); // Asigna la fecha actual si no se proporciona
+        }
         return warehouseRepository.save(warehouse);
     }
 
@@ -37,7 +41,7 @@ public class WarehouseService {
         return warehouseRepository.findById(id).map(existingWarehouse -> {
             existingWarehouse.setNameWarehouse(warehouse.getNameWarehouse());
             existingWarehouse.setLatitudeWarehouse(warehouse.getLatitudeWarehouse());
-            existingWarehouse.setLenghtWarehouse(warehouse.getLenghtWarehouse());
+            existingWarehouse.setLengthWarehouse(warehouse.getLengthWarehouse()); // Cambiado
             existingWarehouse.setVirtualStorePercentage(warehouse.getVirtualStorePercentage());
             existingWarehouse.setIdSuperAdmin(warehouse.getIdSuperAdmin());
             existingWarehouse.setIdUserFirebase(warehouse.getIdUserFirebase());
@@ -53,13 +57,13 @@ public class WarehouseService {
         return false;
     }
 
-    public boolean isLocationValid(float latitude, float longitude, double maxDistanceMeters) {
+    public boolean isLocationValid(float latitude, float longitude, float maxDistanceMeters) {
         List<Warehouse> warehouses = warehouseRepository.findAll();
         for (Warehouse warehouse : warehouses) {
-            if (warehouse.getLatitudeWarehouse() == 0.0f && warehouse.getLenghtWarehouse() == 0.0f) {
+            if (warehouse.getLatitudeWarehouse() == 0.0f && warehouse.getLengthWarehouse() == 0.0f) {
                 continue; // Ignorar almacenes con coordenadas no válidas
             }
-            double distance = calculateDistance(latitude, longitude, warehouse.getLatitudeWarehouse(), warehouse.getLenghtWarehouse());
+            double distance = calculateDistance(latitude, longitude, warehouse.getLatitudeWarehouse(), warehouse.getLengthWarehouse());
             if (distance < maxDistanceMeters) {
                 return false;
             }
