@@ -16,31 +16,31 @@ const warehouses = [
         id: 1,
         name: 'Almacén Central',
         creator: 'Juan Pérez',
-        location: 'Ciudad de México'
+        location: 'Bogota'
     },
     {
         id: 2,
         name: 'Bodega Norte',
         creator: 'María González',
-        location: 'Monterrey'
+        location: 'Cali'
     },
     {
         id: 3,
         name: 'Depósito Sur',
         creator: 'Carlos Rodríguez',
-        location: 'Guadalajara'
+        location: 'Medellin'
     },
     {
         id: 4,
         name: 'Almacén Costero',
         creator: 'Ana Martínez',
-        location: 'Veracruz'
+        location: 'Tunja'
     },
     {
         id: 5,
         name: 'Centro de Distribución',
         creator: 'Roberto Sánchez',
-        location: 'Puebla'
+        location: 'Cienega'
     }
 ];
 

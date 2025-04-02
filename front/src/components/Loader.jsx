@@ -46,7 +46,7 @@ const Loader = () => {
                 </div>
             </div>
 
-            <style jsx>{`
+            <style jsx="true">{`
                 @keyframes motion {
                     0% { transform: translateY(0px); }
                     50% { transform: translateY(3px); }

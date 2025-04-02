@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { FaTimes } from 'react-icons/fa';
-import { useAuth } from '../../context/AuthContext'; // Importamos el hook de autenticación
+import { useAuth } from '../../context/AuthContext';
 
 import { createWarehouse } from '../../services/warehouseService';
 
 const ModalAddWarehouse = ({ isOpen, onClose }) => {
-    const { currentUser } = useAuth(); // Obtenemos el usuario actual
+    const { currentUser } = useAuth();
+    // Update state variable names to match input field names
     const [formData, setFormData] = useState({
-        nameWarehouse: '',
-        latitudeWarehouse: '',
-        lenghtWarehouse: '',
+        name: '',
+        latitude: '',
+        longitude: '',
     });
 
     const handleChange = (e) => {
@@ -30,6 +31,7 @@ const ModalAddWarehouse = ({ isOpen, onClose }) => {
                 }
 
                 await createWarehouse(newWarehouse);
+                onClose(); // Close modal after successful submission
             }
         } catch (err) {
             console.error(err)
@@ -39,7 +41,6 @@ const ModalAddWarehouse = ({ isOpen, onClose }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        // Agregamos el ID y email del usuario actual como creador
         const warehouseData = {
             ...formData,
             userFirebaseId: currentUser?.uid || 'usuario_anónimo',
@@ -47,7 +48,8 @@ const ModalAddWarehouse = ({ isOpen, onClose }) => {
         };
 
         onSubmit(warehouseData);
-        setFormData({ nameWarehouse: '', latitudeWarehouse: '', lenghtWarehouse: '' });
+        // Reset form with the correct field names
+        setFormData({ name: '', latitude: '', longitude: '' });
     };
 
     if (!isOpen) return null;
