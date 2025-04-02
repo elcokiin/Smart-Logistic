@@ -25,7 +25,7 @@ public class WarehouseService {
         return warehouseRepository.findAll();
     }
 
-    public Optional<Warehouse> getWarehouseById(Long id) {
+    public Optional<Warehouse> getWarehouseById(int id) {
         return warehouseRepository.findById(id);
     }
 
@@ -33,7 +33,7 @@ public class WarehouseService {
         return warehouseRepository.save(warehouse);
     }
 
-    public Optional<Warehouse> updateWarehouse(Long id, Warehouse warehouseData) {
+    public Optional<Warehouse> updateWarehouse(int id, Warehouse warehouseData) {
         Optional<Warehouse> existingWarehouseOpt = warehouseRepository.findById(id);
         if (existingWarehouseOpt.isEmpty()) {
             return Optional.empty();
@@ -41,7 +41,6 @@ public class WarehouseService {
 
         Warehouse existingWarehouse = existingWarehouseOpt.get();
         existingWarehouse.setNameWarehouse(warehouseData.getNameWarehouse());
-        existingWarehouse.setAddressWarehouse(warehouseData.getAddressWarehouse());
         existingWarehouse.setLatitudeWarehouse(warehouseData.getLatitudeWarehouse());
         existingWarehouse.setLenghtWarehouse(warehouseData.getLenghtWarehouse());
         existingWarehouse.setVirtualStorePercentage(warehouseData.getVirtualStorePercentage());
@@ -52,7 +51,7 @@ public class WarehouseService {
         return Optional.of(warehouseRepository.save(existingWarehouse));
     }
 
-    public boolean deleteWarehouse(Long id) {
+    public boolean deleteWarehouse(int id) {
         return warehouseRepository.deleteById(id);
     }
 

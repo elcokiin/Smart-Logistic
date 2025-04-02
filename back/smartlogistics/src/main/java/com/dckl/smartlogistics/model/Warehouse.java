@@ -5,9 +5,8 @@ import java.util.Objects;
 
 public class Warehouse implements Cloneable {
 
-    private Long idWarehouse;
+    private Integer idWarehouse; // Cambiado de int a Integer
     private String nameWarehouse;
-    private String addressWarehouse;
     private float latitudeWarehouse;
     private float lenghtWarehouse;
     private float virtualStorePercentage;
@@ -20,12 +19,11 @@ public class Warehouse implements Cloneable {
     }
 
     // Constructor con parámetros
-    public Warehouse(Long idWarehouse, String nameWarehouse, String addressWarehouse, float latitudeWarehouse,
+    public Warehouse(int idWarehouse, String nameWarehouse, float latitudeWarehouse,
                      float lenghtWarehouse, float virtualStorePercentage, Timestamp dateCreation, int idSuperAdmin,
                      int idUserFirebase) {
         this.idWarehouse = idWarehouse;
         this.nameWarehouse = nameWarehouse;
-        this.addressWarehouse = addressWarehouse;
         this.latitudeWarehouse = latitudeWarehouse;
         this.lenghtWarehouse = lenghtWarehouse;
         this.virtualStorePercentage = virtualStorePercentage;
@@ -35,11 +33,11 @@ public class Warehouse implements Cloneable {
     }
 
     // Getters y Setters
-    public Long getIdWarehouse() {
+    public Integer getIdWarehouse() {
         return idWarehouse;
     }
 
-    public void setIdWarehouse(Long idWarehouse) {
+    public void setIdWarehouse(Integer idWarehouse) {
         this.idWarehouse = idWarehouse;
     }
 
@@ -49,14 +47,6 @@ public class Warehouse implements Cloneable {
 
     public void setNameWarehouse(String nameWarehouse) {
         this.nameWarehouse = nameWarehouse;
-    }
-
-    public String getAddressWarehouse() {
-        return addressWarehouse;
-    }
-
-    public void setAddressWarehouse(String addressWarehouse) {
-        this.addressWarehouse = addressWarehouse;
     }
 
     public float getLatitudeWarehouse() {
@@ -113,7 +103,7 @@ public class Warehouse implements Cloneable {
         try {
             return (Warehouse) super.clone();
         } catch (CloneNotSupportedException e) {
-            return new Warehouse(this.idWarehouse, this.nameWarehouse, this.addressWarehouse, this.latitudeWarehouse,
+            return new Warehouse(this.idWarehouse, this.nameWarehouse, this.latitudeWarehouse,
                     this.lenghtWarehouse, this.virtualStorePercentage, this.dateCreation, this.idSuperAdmin,
                     this.idUserFirebase);
         }
@@ -131,13 +121,12 @@ public class Warehouse implements Cloneable {
                 idUserFirebase == warehouse.idUserFirebase &&
                 Objects.equals(idWarehouse, warehouse.idWarehouse) &&
                 Objects.equals(nameWarehouse, warehouse.nameWarehouse) &&
-                Objects.equals(addressWarehouse, warehouse.addressWarehouse) &&
                 Objects.equals(dateCreation, warehouse.dateCreation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idWarehouse, nameWarehouse, addressWarehouse, latitudeWarehouse, lenghtWarehouse,
+        return Objects.hash(idWarehouse, nameWarehouse, latitudeWarehouse, lenghtWarehouse,
                 virtualStorePercentage, dateCreation, idSuperAdmin, idUserFirebase);
     }
 
@@ -146,7 +135,6 @@ public class Warehouse implements Cloneable {
         return "Warehouse{" +
                 "idWarehouse=" + idWarehouse +
                 ", nameWarehouse='" + nameWarehouse + '\'' +
-                ", addressWarehouse='" + addressWarehouse + '\'' +
                 ", latitudeWarehouse=" + latitudeWarehouse +
                 ", lenghtWarehouse=" + lenghtWarehouse +
                 ", virtualStorePercentage=" + virtualStorePercentage +
