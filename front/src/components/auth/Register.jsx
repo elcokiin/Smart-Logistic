@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/config';
-import { getFirestore, doc, setDoc } from 'firebase/firestore'; // Importa Firestore
+import { getFirestore, doc, setDoc } from 'firebase/firestore';
 
-const db = getFirestore(); // Inicializa Firestore
+const db = getFirestore(); 
 
 const Register = () => {
     const [formData, setFormData] = useState({
@@ -12,9 +12,6 @@ const Register = () => {
         password: '',
         confirmPassword: '',
     });
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -24,12 +21,11 @@ const Register = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
-            setError('Las contraseñas no coinciden');
+            alert('Passwords do not match');
             return;
         }
 
         try {
-            // Crea el usuario en Firebase Authentication
             const userCredential = await createUserWithEmailAndPassword(
                 auth,
                 formData.email,
@@ -42,6 +38,7 @@ const Register = () => {
                 name: formData.name,
                 email: formData.email,
                 roles: ['user'],
+                // createdAt: new Date()
             });
 
             console.log('User created and role assigned:', user);
@@ -125,13 +122,10 @@ const Register = () => {
                             type="submit"
                             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                         >
-                            {loading ? 'Registrando...' : 'Registrarse'}
+                            Registrarse
                         </button>
                     </div>
                 </form>
-                <div className="mt-4 text-center">
-                    <Link to="/login" className="text-indigo-600 hover:text-indigo-500">¿Ya tienes una cuenta? Inicia sesión</Link>
-                </div>
             </div>
         </div>
     );

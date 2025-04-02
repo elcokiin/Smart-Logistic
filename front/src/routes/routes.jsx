@@ -17,6 +17,10 @@ export const ProtectedRoute = ({ children, requiredRole = null }) => {
     if (requiredRole === 'superadmin' && userRole !== 'superadmin') {
       return <Navigate to="/unauthorized" />;
     }
+
+    if (requiredRole === 'user' && userRole !== 'user') {
+      return <Navigate to="/unauthorized" />;
+    }
   }
 
   return children;

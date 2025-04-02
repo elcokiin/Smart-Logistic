@@ -1,17 +1,35 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext'; 
 import { useNavigate, Link } from 'react-router-dom';
-import { sendPasswordResetEmail } from 'firebase/auth'; // Importa el método de Firebase
-import { auth } from '../../firebase/config'; // Ajusta la ruta según tu estructura de carpetas
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../firebase/config';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [resetMessage, setResetMessage] = useState(''); // Estado para el mensaje de restablecimiento
-  const { login } = useAuth();
+  const [resetMessage, setResetMessage] = useState('');
+  const { login, userRole } = useAuth(); // Obtén userRole aquí
   const navigate = useNavigate();
+
+  // Usar useEffect para observar cambios en userRole y redirigir
+  useEffect(() => {
+    // Solo redirigir si no estamos cargando y el usuario tiene un rol
+    if (!loading && userRole) {
+      if (userRole === 'superadmin') {
+        navigate('/superadmin');
+      } else if (userRole === 'admin') {
+        navigate('/home');
+      }      
+      else if (userRole === 'user') {
+        navigate('/user');
+      } 
+      else {
+        navigate('/home'); 
+      }
+    }
+  }, [userRole, navigate, loading]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -20,7 +38,8 @@ function Login() {
       setError('');
       setLoading(true);
       await login(email, password);
-      navigate('/home');
+      // No necesitas setTimeout ni llamar a useAuth aquí
+      // El useEffect se encargará de la redirección
     } catch (error) {
       let errorMessage = "Error al iniciar sesión";
       

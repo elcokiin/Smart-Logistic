@@ -17,6 +17,9 @@ importers:
       firebase:
         specifier: ^11.6.0
         version: 11.6.0
+      front:
+        specifier: 'file:'
+        version: file:(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2))
       react:
         specifier: ^19.0.0
         version: 19.1.0
@@ -1337,6 +1340,9 @@ packages:
   for-each@0.3.5:
     resolution: {integrity: sha512-dKx12eRCVIzqCxFGplyFKJMPvLEWgmNtUrpTiJIR5u97zEhRG8ySrtboPHZXx7daLxQVrl643cTzbab2tkQjxg==}
     engines: {node: '>= 0.4'}
+
+  'front@file:':
+    resolution: {directory: '', type: directory}
 
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
@@ -3790,6 +3796,20 @@ snapshots:
   for-each@0.3.5:
     dependencies:
       is-callable: 1.2.7
+
+  front@file:(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)):
+    dependencies:
+      '@tailwindcss/vite': 4.0.17(vite@6.2.3(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2))
+      '@vis.gl/react-google-maps': 1.5.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      firebase: 11.6.0
+      react: 19.1.0
+      react-dom: 19.1.0(react@19.1.0)
+      react-icons: 5.5.0(react@19.1.0)
+      react-router-dom: 7.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      tailwindcss: 4.0.17
+    transitivePeerDependencies:
+      - '@react-native-async-storage/async-storage'
+      - vite
 
   fs.realpath@1.0.0: {}
 

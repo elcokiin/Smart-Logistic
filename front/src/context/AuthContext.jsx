@@ -10,6 +10,7 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
+  const [userRoles, setUserRoles] = useState([]);
   const [loading, setLoading] = useState(true);
 
   async function login(email, password) {
@@ -20,16 +21,16 @@ export const AuthProvider = ({ children }) => {
     return signOut(auth);
   }
 
-  async function getUserRole(userId) {
+  async function getUserRoles(userId) {
     try {
       const userDoc = await getDoc(doc(db, "users", userId));
       if (userDoc.exists()) {
-        return userDoc.data().role;
+        return userDoc.data().roles || ['user'];
       }
-      return 'user'; 
+      return ['user']; 
     } catch (error) {
-      console.error("Error getting user role:", error);
-      return 'user';
+      console.error("Error getting user roles:", error);
+      return ['user'];
     }
   }
 
@@ -37,9 +38,19 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       if (user) {
-        const role = await getUserRole(user.uid);
-        setUserRole(role);
+        const roles = await getUserRoles(user.uid);
+        setUserRoles(roles);
+        
+        // (superadmin > admin > user)
+        if (roles.includes('superadmin')) {
+          setUserRole('superadmin');
+        } else if (roles.includes('admin')) {
+          setUserRole('admin');
+        } else {
+          setUserRole('user');
+        }
       } else {
+        setUserRoles([]);
         setUserRole(null);
       }
       setLoading(false);
@@ -50,6 +61,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     currentUser,
     userRole,
+    userRoles,
     login,
     logout,
     isAdmin: userRole === 'admin' || userRole === 'superadmin',
