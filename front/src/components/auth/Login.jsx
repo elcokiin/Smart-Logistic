@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext'; 
 import { useNavigate, Link } from 'react-router-dom';
+import { sendPasswordResetEmail } from 'firebase/auth'; // Importa el método de Firebase
+import { auth } from '../../firebase/config'; // Ajusta la ruta según tu estructura de carpetas
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState(''); // Estado para el mensaje de restablecimiento
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -17,9 +20,7 @@ function Login() {
       setError('');
       setLoading(true);
       await login(email, password);
-      
-      // Redirigir según el rol (esto lo manejaremos después con el router)
-      navigate('/dashboard');
+      navigate('/home');
     } catch (error) {
       let errorMessage = "Error al iniciar sesión";
       
@@ -36,6 +37,22 @@ function Login() {
       setLoading(false);
     }
   }
+
+  async function handlePasswordReset() {
+    if (!email) {
+        setError('Por favor, ingresa tu correo electrónico para restablecer la contraseña.');
+        return;
+    }
+
+    try {
+        setError('');
+        setResetMessage('');
+        await sendPasswordResetEmail(auth, email); // Usa la instancia de auth importada
+        setResetMessage('Se ha enviado un correo para restablecer tu contraseña.');
+    } catch (error) {
+        setError('Error al enviar el correo de restablecimiento: ' + error.message);
+    }
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
@@ -58,6 +75,12 @@ function Login() {
               </svg>
               <span className="block sm:inline">{error}</span>
             </div>
+          </div>
+        )}
+
+        {resetMessage && (
+          <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-md shadow-sm" role="alert">
+            <span className="block sm:inline">{resetMessage}</span>
           </div>
         )}
         
@@ -97,24 +120,14 @@ function Login() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-700">
-                Recordarme
-              </label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-300">
-                ¿Olvidaste tu contraseña?
-              </a>
-            </div>
+          <div className="text-sm text-right">
+            <button
+              type="button"
+              onClick={handlePasswordReset}
+              className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-300 underline"
+            >
+              ¿Olvidaste tu contraseña?
+            </button>
           </div>
 
           <div>
