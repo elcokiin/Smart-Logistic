@@ -1,35 +1,61 @@
 package com.dckl.smartlogistics.model;
 
 import jakarta.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
+@Table(name = "warehouse")
 public class Warehouse implements Cloneable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_warehouse")
     private Integer idWarehouse;
 
-    private String nameWarehouse;
-    private float latitudeWarehouse;
-    private float lenghtWarehouse;
-    private float virtualStorePercentage;
-    private Timestamp dateCreation;
+    @Column(name = "date_creation", nullable = false)
+    private LocalDateTime dateCreation;
+
+    @Column(name = "id_super_admin", nullable = false)
     private Integer idSuperAdmin;
-    private Integer idUserFirebase;
+
+    @Column(name = "id_user_firebase", nullable = false)
+    private String idUserFirebase;
+
+    @Column(name = "latitude_warehouse", nullable = false)
+    private float latitudeWarehouse;
+
+    @Column(name = "length_warehouse", nullable = false) // Cambiado de "lenght_warehouse" a "length_warehouse"
+    private float lengthWarehouse;
+
+    @Column(name = "name_warehouse", nullable = false)
+    private String nameWarehouse;
+
+    @Column(name = "virtual_store_percentage", nullable = false)
+    private Float virtualStorePercentage;
+
+    @ManyToMany
+    @JoinTable(
+        name = "warehouse_product",
+        joinColumns = @JoinColumn(name = "warehouse_id"),
+        inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private List<Product> products = new ArrayList<>();
 
     // Constructor por defecto
     public Warehouse() {
+        this.dateCreation = LocalDateTime.now(); // Asigna la fecha actual por defecto
     }
 
     // Constructor con parámetros
     public Warehouse(int idWarehouse, String nameWarehouse, float latitudeWarehouse,
-                     float lenghtWarehouse, float virtualStorePercentage, Timestamp dateCreation, int idSuperAdmin,
-                     int idUserFirebase) {
-        this.idWarehouse = idWarehouse;
+                     float lengthWarehouse, Float virtualStorePercentage, LocalDateTime dateCreation, int idSuperAdmin,
+                     String idUserFirebase) { 
         this.nameWarehouse = nameWarehouse;
         this.latitudeWarehouse = latitudeWarehouse;
-        this.lenghtWarehouse = lenghtWarehouse;
+        this.lengthWarehouse = lengthWarehouse;
         this.virtualStorePercentage = virtualStorePercentage;
         this.dateCreation = dateCreation;
         this.idSuperAdmin = idSuperAdmin;
@@ -61,27 +87,27 @@ public class Warehouse implements Cloneable {
         this.latitudeWarehouse = latitudeWarehouse;
     }
 
-    public float getLenghtWarehouse() {
-        return lenghtWarehouse;
+    public float getLengthWarehouse() {
+        return lengthWarehouse;
     }
 
-    public void setLenghtWarehouse(float lenghtWarehouse) {
-        this.lenghtWarehouse = lenghtWarehouse;
+    public void setLengthWarehouse(float lengthWarehouse) {
+        this.lengthWarehouse = lengthWarehouse;
     }
 
-    public float getVirtualStorePercentage() {
+    public Float getVirtualStorePercentage() {
         return virtualStorePercentage;
     }
 
-    public void setVirtualStorePercentage(float virtualStorePercentage) {
+    public void setVirtualStorePercentage(Float virtualStorePercentage) {
         this.virtualStorePercentage = virtualStorePercentage;
     }
 
-    public Timestamp getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(Timestamp dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 
@@ -93,12 +119,20 @@ public class Warehouse implements Cloneable {
         this.idSuperAdmin = idSuperAdmin;
     }
 
-    public Integer getIdUserFirebase() {
+    public String getIdUserFirebase() {
         return idUserFirebase;
     }
 
-    public void setIdUserFirebase(Integer idUserFirebase) {
+    public void setIdUserFirebase(String idUserFirebase) {
         this.idUserFirebase = idUserFirebase;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     // Método de clonación (patrón Prototype)
@@ -108,7 +142,7 @@ public class Warehouse implements Cloneable {
             return (Warehouse) super.clone();
         } catch (CloneNotSupportedException e) {
             return new Warehouse(this.idWarehouse, this.nameWarehouse, this.latitudeWarehouse,
-                    this.lenghtWarehouse, this.virtualStorePercentage, this.dateCreation, this.idSuperAdmin,
+                    this.lengthWarehouse, this.virtualStorePercentage, this.dateCreation, this.idSuperAdmin,
                     this.idUserFirebase);
         }
     }
@@ -119,10 +153,10 @@ public class Warehouse implements Cloneable {
         if (o == null || getClass() != o.getClass()) return false;
         Warehouse warehouse = (Warehouse) o;
         return Float.compare(warehouse.latitudeWarehouse, latitudeWarehouse) == 0 &&
-                Float.compare(warehouse.lenghtWarehouse, lenghtWarehouse) == 0 &&
+                Float.compare(warehouse.lengthWarehouse, lengthWarehouse) == 0 &&
                 Float.compare(warehouse.virtualStorePercentage, virtualStorePercentage) == 0 &&
-                idSuperAdmin == warehouse.idSuperAdmin &&
-                idUserFirebase == warehouse.idUserFirebase &&
+                Objects.equals(idSuperAdmin, warehouse.idSuperAdmin) && // Comparación correcta
+                Objects.equals(idUserFirebase, warehouse.idUserFirebase) && // Comparación correcta
                 Objects.equals(idWarehouse, warehouse.idWarehouse) &&
                 Objects.equals(nameWarehouse, warehouse.nameWarehouse) &&
                 Objects.equals(dateCreation, warehouse.dateCreation);
@@ -130,7 +164,7 @@ public class Warehouse implements Cloneable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idWarehouse, nameWarehouse, latitudeWarehouse, lenghtWarehouse,
+        return Objects.hash(idWarehouse, nameWarehouse, latitudeWarehouse, lengthWarehouse,
                 virtualStorePercentage, dateCreation, idSuperAdmin, idUserFirebase);
     }
 
@@ -140,11 +174,12 @@ public class Warehouse implements Cloneable {
                 "idWarehouse=" + idWarehouse +
                 ", nameWarehouse='" + nameWarehouse + '\'' +
                 ", latitudeWarehouse=" + latitudeWarehouse +
-                ", lenghtWarehouse=" + lenghtWarehouse +
+                ", lengthWarehouse=" + lengthWarehouse +
                 ", virtualStorePercentage=" + virtualStorePercentage +
                 ", dateCreation=" + dateCreation +
                 ", idSuperAdmin=" + idSuperAdmin +
                 ", idUserFirebase=" + idUserFirebase +
+                ", products=" + products +
                 '}';
     }
 }
