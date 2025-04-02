@@ -141,6 +141,7 @@ export const AuthProvider = ({ children }) => {
     hasRole,
     login,
     logout,
+    getIdToken,
     refreshToken, // Exponemos la función para actualizar el token
     loading: loading || rolesLoading
   };
