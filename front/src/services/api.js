@@ -2,7 +2,7 @@
 const base_api = "http://localhost:8080/api";
 
 export default async (endpoint, options = {}) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
 
     const isFormData = options.body instanceof FormData;
 

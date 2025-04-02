@@ -78,12 +78,6 @@
 			 <version>8.0.33</version> <!-- Asegúrate de usar una versión compatible -->
 			<scope>runtime</scope>
 		</dependency>
-
-		<!-- Otras dependencias necesarias -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>

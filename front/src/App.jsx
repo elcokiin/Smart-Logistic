@@ -7,15 +7,50 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 
 import Home from './pages/Home'
 import VirtualStore from './pages/VirtualStore';
+import AccessDenied from './pages/AccessDenied';
 
-// Protected route component
-const ProtectedRoute = ({ children }) => {
-  const { currentUser, loading } = useAuth();
+// Define roles permitidos por ruta
+const ROUTE_ACCESS_MAP = {
+  '/home': ['admin'],
+  '/store': ['admin'],
+  '/superAdmin': ['superAdmin']
+};
 
-  if (loading) return <div>Loading...</div>;
+// Protected route - redirige a login si no está autenticado o no tiene permiso
+const ProtectedRoute = ({ children, requiredRoles = [] }) => {
+  const { currentUser, loading, hasRole } = useAuth();
 
+  if (loading) return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+
+  // Redireccionar si no está autenticado
   if (!currentUser) {
     return <Navigate to="/login" />;
+  }
+
+  // Verificar si el usuario tiene al menos uno de los roles requeridos
+  const hasRequiredRole = requiredRoles.length === 0 || requiredRoles.some(role => hasRole(role));
+
+  if (!hasRequiredRole) {
+    return <Navigate to="/access-denied" />;
+  }
+
+  return children;
+};
+
+// Public route - redirige a una página adecuada si ya está autenticado
+const PublicRoute = ({ children }) => {
+  const { currentUser, loading, hasRole } = useAuth();
+
+  if (loading) return <div className="flex justify-center items-center min-h-screen">Cargando...</div>;
+
+  // Si está autenticado, redirigir a la primera página a la que tenga acceso
+  if (currentUser) {
+    // Buscar la primera ruta a la que tenga permiso
+    if (hasRole('superAdmin')) return <Navigate to="/superAdmin" />;
+    if (hasRole('admin')) return <Navigate to="/home" />;
+
+    // Si no tiene ningún rol específico pero está autenticado
+    return <Navigate to="/access-denied" />;
   }
 
   return children;
@@ -24,27 +59,49 @@ const ProtectedRoute = ({ children }) => {
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/" element={<Navigate to="/login" />} />
+      {/* Rutas públicas (solo para usuarios no autenticados) */}
+      <Route path="/login" element={
+        <PublicRoute>
+          <Login />
+        </PublicRoute>
+      } />
 
-      {/* Protected routes */}
-      <Route path="/home" element={
-        <ProtectedRoute>
-          <Home />
-        </ProtectedRoute>
+      <Route path="/register" element={
+        <PublicRoute>
+          <Register />
+        </PublicRoute>
       } />
-      <Route path="/store" element={
-        <ProtectedRoute>
-          <VirtualStore />
-        </ProtectedRoute>
-      } />
-      <Route path="/superAdmin" element={
-        <ProtectedRoute>
-          <SuperAdmin />
-        </ProtectedRoute>
-      } />
+
+      <Route path="/" element={<Navigate to="/login" />} />
+      <Route path="/access-denied" element={<AccessDenied />} />
+
+      {/* Rutas protegidas por rol */}
+      <Route
+        path="/home"
+        element={
+          <ProtectedRoute requiredRoles={ROUTE_ACCESS_MAP['/home']}>
+            <Home />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/store"
+        element={
+          <ProtectedRoute requiredRoles={ROUTE_ACCESS_MAP['/store']}>
+            <VirtualStore />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/superAdmin"
+        element={
+          <ProtectedRoute requiredRoles={ROUTE_ACCESS_MAP['/superAdmin']}>
+            <SuperAdmin />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
