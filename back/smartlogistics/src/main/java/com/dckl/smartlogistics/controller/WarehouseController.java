@@ -2,6 +2,7 @@ package com.dckl.smartlogistics.controller;
 
 import com.dckl.smartlogistics.model.Warehouse;
 import com.dckl.smartlogistics.service.WarehouseService;
+import com.dckl.smartlogistics.service.GlobalsParametersService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,12 @@ import java.util.Map;
 public class WarehouseController {
     
     private final WarehouseService warehouseService;
+    private final GlobalsParametersService globalsParametersService;
     
     @Autowired
-    public WarehouseController(WarehouseService warehouseService) {
+    public WarehouseController(WarehouseService warehouseService, GlobalsParametersService globalsParametersService) {
         this.warehouseService = warehouseService;
+        this.globalsParametersService = globalsParametersService;
     }
     
     @GetMapping
@@ -38,13 +41,16 @@ public class WarehouseController {
     public ResponseEntity<?> createWarehouse(@RequestBody(required = false) Warehouse warehouse) {
 
         Warehouse newWarehouse;
-
-        // Intentar clonar el último almacén existente
         List<Warehouse> warehouses = warehouseService.getAllWarehouses();
+        float minDistanceWarehouse = globalsParametersService.getMinDistanceWarehouse(); // Declarar y asignar
+        float virtualStorePercentage = globalsParametersService.getVirtualStorePercentage(); // Declarar y asignar
+
         if (!warehouses.isEmpty()) {
             Warehouse lastWarehouse = warehouses.get(warehouses.size() - 1);
             newWarehouse = lastWarehouse.clone(); // Clonar el último almacén
             newWarehouse.setIdWarehouse(null); // Esto ahora es válido porque idWarehouse es Integer
+
+            newWarehouse.setVirtualStorePercentage(virtualStorePercentage);
 
             // Si se envían datos en el cuerpo, sobrescribir los valores del clon
             if (warehouse != null) {
@@ -85,9 +91,6 @@ public class WarehouseController {
                 if (warehouse.getLenghtWarehouse() != 0.0f) {
                     newWarehouse.setLenghtWarehouse(warehouse.getLenghtWarehouse());
                 }
-                if (warehouse.getVirtualStorePercentage() != 0.0f) {
-                    newWarehouse.setVirtualStorePercentage(warehouse.getVirtualStorePercentage());
-                }
                 if (warehouse.getIdSuperAdmin() != 0) { // Validar que no sea el valor por defecto
                     newWarehouse.setIdSuperAdmin(warehouse.getIdSuperAdmin());
                 }
@@ -97,15 +100,18 @@ public class WarehouseController {
             }
         }
 
+        // Asignar el valor de virtualStorePercentage al nuevo almacén
+        newWarehouse.setVirtualStorePercentage(virtualStorePercentage);
+
         // Validar la ubicación del nuevo almacén
         boolean isValidLocation = warehouseService.isLocationValid(
                 newWarehouse.getLatitudeWarehouse(),
                 newWarehouse.getLenghtWarehouse(),
-                300 // Distancia máxima en metros
+                minDistanceWarehouse // Usar el valor dinámico
         );
 
         if (!isValidLocation) {
-            return ResponseEntity.badRequest().body("La distancia a otros almacenes debe ser mayor a 300 metros.");
+            return ResponseEntity.badRequest().body("La distancia a otros almacenes debe ser mayor a " + minDistanceWarehouse + " metros.");
         }
 
         // Crear el nuevo almacén

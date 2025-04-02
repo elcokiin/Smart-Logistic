@@ -1,18 +1,22 @@
 package com.dckl.smartlogistics.model;
 
+import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+@Entity
 public class Warehouse implements Cloneable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer idWarehouse;
 
-    private Integer idWarehouse; // Cambiado de int a Integer
     private String nameWarehouse;
     private float latitudeWarehouse;
     private float lenghtWarehouse;
     private float virtualStorePercentage;
     private Timestamp dateCreation;
-    private int idSuperAdmin;
-    private int idUserFirebase;
+    private Integer idSuperAdmin;
+    private Integer idUserFirebase;
 
     // Constructor por defecto
     public Warehouse() {
@@ -81,19 +85,19 @@ public class Warehouse implements Cloneable {
         this.dateCreation = dateCreation;
     }
 
-    public int getIdSuperAdmin() {
+    public Integer getIdSuperAdmin() {
         return idSuperAdmin;
     }
 
-    public void setIdSuperAdmin(int idSuperAdmin) {
+    public void setIdSuperAdmin(Integer idSuperAdmin) {
         this.idSuperAdmin = idSuperAdmin;
     }
 
-    public int getIdUserFirebase() {
+    public Integer getIdUserFirebase() {
         return idUserFirebase;
     }
 
-    public void setIdUserFirebase(int idUserFirebase) {
+    public void setIdUserFirebase(Integer idUserFirebase) {
         this.idUserFirebase = idUserFirebase;
     }
 
