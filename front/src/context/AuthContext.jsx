@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth } from '../firebase/config';
-import { onAuthStateChanged, signInWithEmailAndPassword } from 'firebase/auth';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { getUserRole } from '../services/authService';
 
 const AuthContext = createContext();
@@ -14,6 +14,10 @@ export const AuthProvider = ({ children }) => {
 
   async function login(email, password) {
     return signInWithEmailAndPassword(auth, email, password);
+  }
+
+  async function logout() {
+    return signOut(auth);
   }
 
   useEffect(() => {
@@ -36,7 +40,8 @@ export const AuthProvider = ({ children }) => {
     userRole,
     isAdmin: userRole === 'admin',
     isSuperAdmin: userRole === 'superadmin',
-    login // Exporta la función login para que esté disponible en el contexto
+    login,
+    logout // Exportamos la función logout
   };
 
   return (
